@@ -1,4 +1,4 @@
-defmodule FibonacciServer.Sequence.Blacklist do
+defmodule FibonacciServer.Fibonacci.Blacklist do
   use Agent
 
   # API

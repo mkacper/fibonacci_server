@@ -17,7 +17,7 @@ defmodule FibonacciServer.Application do
       # {FibonacciServer.Worker, arg},
       # Start to serve requests, typically the last entry
       FibonacciServerWeb.Endpoint,
-      FibonacciServer.Sequence.Blacklist
+      FibonacciServer.Fibonacci.Blacklist
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
