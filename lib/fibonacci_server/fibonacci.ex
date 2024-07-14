@@ -13,11 +13,11 @@ defmodule FibonacciServer.Fibonacci do
     end
   end
 
-  def sequence(n) do
+  def sequence(n, start_from \\ 0) do
     blacklist = Blacklist.get()
 
     n
-    |> Numbers.sequence()
+    |> Numbers.sequence(start_from)
     |> Enum.reject(&(&1 in blacklist))
   end
 
