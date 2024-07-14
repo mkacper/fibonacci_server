@@ -3,9 +3,16 @@ defmodule FibonacciServer.Sequence do
   def number(1), do: 1
 
   def number(n), do: number(n, _current_n = 0, {0, 1})
-  def number(n, n, {n0, _n1}), do: n0
+  defp number(n, n, {n0, _n1}), do: n0
 
-  def number(n, current_n, {n0, n1}) do
+  defp number(n, current_n, {n0, n1}) do
     number(n, current_n + 1, {n1, n0 + n1})
+  end
+
+  def numbers(n), do: numbers(n - 1, [1, 0])
+  defp numbers(0, numbers), do: Enum.reverse(numbers)
+
+  defp numbers(n, [n0 | [n1 | _]] = numbers) do
+    numbers(n - 1, [n0 + n1 | numbers])
   end
 end
