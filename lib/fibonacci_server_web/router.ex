@@ -7,6 +7,7 @@ defmodule FibonacciServerWeb.Router do
 
   scope "/api", FibonacciServerWeb do
     pipe_through :api
+    get "/sequence", FibonacciController, :sequence
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
