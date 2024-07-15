@@ -2,14 +2,14 @@ defmodule FibonacciServer.Fibonacci do
   alias FibonacciServer.Fibonacci.Blacklist
   alias FibonacciServer.Fibonacci.Numbers
 
-  def number(n) do
+  def value(n) do
     blacklist = Blacklist.get()
-    number = Numbers.number(n)
+    value = Numbers.value(n)
 
-    if number in blacklist do
+    if value in blacklist do
       {:error, :blacklisted}
     else
-      {:ok, number}
+      {:ok, value}
     end
   end
 
