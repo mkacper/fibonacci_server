@@ -66,6 +66,9 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
       number = 10
       blacklisted = [3, 7]
 
+      # cleanup
+      on_exit(fn -> for n <- blacklisted, do: Fibonacci.allowlist(n) end)
+
       expected_result =
         number |> fibonacci_sequence_resp() |> reject_blacklisted(blacklisted)
 
@@ -75,9 +78,6 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
 
       # then
       assert expected_result == json_response(conn, 200)["data"]
-
-      # cleanup
-      for n <- blacklisted, do: Fibonacci.allowlist(n)
     end
 
     test "backfill blacklisted numbers if more than one page", %{
@@ -87,6 +87,9 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
       number = 13
       page_size = 5
       blacklisted = [3, 7, 11]
+
+      # cleanup
+      on_exit(fn -> for n <- blacklisted, do: Fibonacci.allowlist(n) end)
 
       expected_1st_page =
         number
