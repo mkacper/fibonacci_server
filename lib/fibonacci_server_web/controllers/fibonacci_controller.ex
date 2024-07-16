@@ -4,10 +4,22 @@ defmodule FibonacciServerWeb.FibonacciController do
 
   @default_page_size 100
 
-  def sequence(conn, %{"number" => _} = params) do
+  def sequence(conn, %{"number" => _number} = params) do
     params = validate_params(params)
-    sequence = Fibonacci.sequence(number(params), start_from(params))
-    json(conn, sequence)
+    current_number = number(params)
+    sequence = sequence(params["number"], current_number, params["cursor"])
+    cursor = List.last(sequence).index + 1
+    json(conn, %{data: sequence, next_cursor: cursor})
+  end
+
+  # Internals
+
+  defp sequence(number, current_number, start_from) when number <= current_number do
+    Fibonacci.sequence(number, start_from)
+  end
+
+  defp sequence(_number, current_number, start_from) do
+    Fibonacci.sequence_with_blacklisted_backfilled(current_number, start_from)
   end
 
   defp validate_params(%{"number" => number} = params) do
@@ -15,22 +27,16 @@ defmodule FibonacciServerWeb.FibonacciController do
       "number" => String.to_integer(number),
       "page_size" =>
         (params["page_size"] && String.to_integer(params["page_size"])) || @default_page_size,
-      "page_number" => (params["page_number"] && String.to_integer(params["page_number"])) || 1
+      "cursor" => (params["cursor"] && String.to_integer(params["cursor"])) || 0
     }
   end
 
-  defp number(%{"page_size" => p_size, "page_number" => p_number, "number" => number}) do
+  defp number(%{"page_size" => p_size, "cursor" => cursor, "number" => number}) do
     if number > p_size do
-      current_number = p_size * p_number - 1
+      current_number = cursor + p_size - 1
       (current_number < number && current_number) || number
     else
       number
     end
   end
-
-  defp start_from(%{"page_size" => size, "page_number" => number}) do
-    number * size - size
-  end
-
-  defp start_from(_), do: 0
 end
