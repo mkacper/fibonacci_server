@@ -117,9 +117,30 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
           assert expected_result == result["data"]
           result["next_cursor"]
       end
+    end
 
-      # cleanup
-      for n <- blacklisted, do: Fibonacci.allowlist(n)
+    test "returns bad request if number param is missing", %{conn: conn} do
+      assert %{"error" => "missing number parameter"} =
+               conn |> get(~p"/api/sequence") |> json_response(400)
+    end
+
+    test "returns bad request if number param cannot be parsed to string", %{conn: conn} do
+      assert %{"error" => "number must be an integer"} =
+               conn |> get(~p"/api/sequence?number=not_a_string") |> json_response(400)
+    end
+
+    test "returns bad request if page_size param cannot be parsed to string", %{conn: conn} do
+      assert %{"error" => "page_size must be an integer"} =
+               conn
+               |> get(~p"/api/sequence?number=10&page_size=not_a_string")
+               |> json_response(400)
+    end
+
+    test "returns bad request if cursor param cannot be parsed to string", %{conn: conn} do
+      assert %{"error" => "page_size must be an integer"} =
+               conn
+               |> get(~p"/api/sequence?number=10&page_size=not_a_string")
+               |> json_response(400)
     end
   end
 
