@@ -18,6 +18,8 @@ defmodule FibonacciServer.Fibonacci.Numbers do
     value(n, current_n + 1, {n1, n0 + n1})
   end
 
+  def sequence(0, _start_from = 0), do: [%{index: 0, value: 0}]
+
   def sequence(n, _start_from = 0),
     do: do_sequence(n - 1, [%{index: 1, value: 1}, %{index: 0, value: 0}])
 
