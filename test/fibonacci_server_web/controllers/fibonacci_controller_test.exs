@@ -146,20 +146,20 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
 
     test "returns bad request if number param cannot be parsed to string", %{conn: conn} do
       assert %{"error" => "number must be a non-negative integer"} =
-               conn |> get(~p"/api/sequence?number=not_a_string") |> json_response(400)
+               conn |> get(~p"/api/sequence?number=not_int") |> json_response(400)
     end
 
     test "returns bad request if page_size param cannot be parsed to string", %{conn: conn} do
       assert %{"error" => "page_size must be a positive integer"} =
                conn
-               |> get(~p"/api/sequence?number=10&page_size=not_a_string")
+               |> get(~p"/api/sequence?number=10&page_size=not_int")
                |> json_response(400)
     end
 
     test "returns bad request if cursor param cannot be parsed to string", %{conn: conn} do
       assert %{"error" => "cursor must be a non-negative integer"} =
                conn
-               |> get(~p"/api/sequence?number=10&cursor=not_a_string")
+               |> get(~p"/api/sequence?number=10&cursor=not_int")
                |> json_response(400)
     end
 
@@ -226,7 +226,7 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
     test "returns bad request error if a given number is not a positive integer", %{
       conn: conn
     } do
-      for number <- ["not_an_int", "-1"] do
+      for number <- ["not_int", "-1"] do
         assert %{"error" => "number must be a non-negative integer"} =
                  conn
                  |> get(~p"/api/value/#{number}")
@@ -253,10 +253,10 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
       assert [^number] = Fibonacci.Blacklist.get()
     end
 
-    test "returns bad request error if a given number is not a positive integer", %{
+    test "returns bad request error if a given number is not a non-negative integer", %{
       conn: conn
     } do
-      for number <- ["not_an_int", "-1"] do
+      for number <- ["not_int", "-1"] do
         assert %{"error" => "number must be a non-negative integer"} =
                  conn
                  |> post(~p"/api/blacklist/numbers", %{"number" => "#{number}"})
@@ -264,7 +264,7 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
       end
     end
 
-    test "returns bad request error if  number parameter is missing", %{
+    test "returns bad request error if number parameter is missing", %{
       conn: conn
     } do
       assert %{"error" => "missing number parameter"} =
@@ -293,10 +293,10 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
       assert [] = Fibonacci.Blacklist.get()
     end
 
-    test "returns bad request error if a given number is not a positive integer", %{
+    test "returns bad request error if a given number is not a non-negative integer", %{
       conn: conn
     } do
-      for number <- ["not_an_int", "-1"] do
+      for number <- ["not_int", "-1"] do
         assert %{"error" => "number must be a non-negative integer"} =
                  conn
                  |> delete(~p"/api/blacklist/numbers/#{number}")

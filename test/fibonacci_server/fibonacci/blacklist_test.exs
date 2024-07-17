@@ -12,13 +12,13 @@ defmodule FibonacciServer.Fibonacci.BlacklistTest do
     assert [567, 1234] = Blacklist.get()
   end
 
-  test "add/1 ignores dupliacates " do
+  test "add/1 ignores dupliacates" do
     assert :ok = Blacklist.add(1234)
     assert :ok = Blacklist.add(1234)
     assert [1234] = Blacklist.get()
   end
 
-  test "remove/1 removes a number from the blacklist " do
+  test "remove/1 removes a number from the blacklist" do
     assert :ok = Blacklist.add(1234)
     assert :ok = Blacklist.remove(1234)
     assert [] = Blacklist.get()
