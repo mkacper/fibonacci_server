@@ -160,6 +160,8 @@ curl http://localhost:4000/api/sequence?number=10
 In this section, I will explain some of the decisions and trade-offs made while
 building this application.
 
+Also, I left some inline code comments for the reviewers (starts with `AUTHOR COMMENT:`).
+
 ### Listing sequence paging
 
 I decided to use cursor-like paging because some of the numbers might be
