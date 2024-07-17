@@ -25,6 +25,16 @@ defmodule FibonacciServerWeb.FibonacciController do
     bad_request(conn, "missing number parameter")
   end
 
+  def value(conn, %{"number" => number}) do
+    with {:ok, number} <- parse_number(number),
+         {:ok, value} <- Fibonacci.value(number) do
+      json(conn, %{data: value})
+    else
+      {:error, :blacklisted} -> not_found(conn)
+      {:error, reason} -> bad_request(conn, reason)
+    end
+  end
+
   # Internals
 
   defp sequence(number, current_number, start_from) when number <= current_number do
@@ -64,6 +74,12 @@ defmodule FibonacciServerWeb.FibonacciController do
     conn
     |> put_status(400)
     |> json(%{error: reason})
+  end
+
+  defp not_found(conn) do
+    conn
+    |> put_status(404)
+    |> json(%{error: "number not found"})
   end
 
   defp parse_number(number),

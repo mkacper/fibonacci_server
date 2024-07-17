@@ -190,6 +190,51 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
     end
   end
 
+  describe "GET /api/value" do
+    test "returns value for a given number", %{
+      conn: conn
+    } do
+      # given
+      number = 12
+      sequence = fibonacci_sequence()
+      {expected_value, _} = Enum.at(sequence, 12)
+
+      # when
+      conn = get(conn, ~p"/api/value/#{number}")
+
+      # then
+      assert expected_value == json_response(conn, 200)["data"]
+    end
+
+    test "returns not found error if a given number is blacklisted", %{
+      conn: conn
+    } do
+      # given
+      number = 12
+      Fibonacci.blacklist(number)
+
+      # cleanup
+      on_exit(fn -> Fibonacci.allowlist(number) end)
+
+      # when
+      conn = get(conn, ~p"/api/value/#{number}")
+
+      # then
+      assert %{"error" => "number not found"} == json_response(conn, 404)
+    end
+
+    test "returns bad request error if a given number is not a positive integer", %{
+      conn: conn
+    } do
+      for number <- ["not_an_int", "-1"] do
+        assert %{"error" => "number must be a non-negative integer"} =
+                 conn
+                 |> get(~p"/api/value/#{number}")
+                 |> json_response(400)
+      end
+    end
+  end
+
   # Helpers
 
   defp fibonacci_sequence_resp(number), do: fibonacci_sequence_resp(number, 0..number)
