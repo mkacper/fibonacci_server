@@ -159,3 +159,54 @@ curl http://localhost:4000/api/sequence?number=10
 
 In this section, I will explain some of the decisions and trade-offs made while
 building this application.
+
+### Listing sequence paging
+
+I decided to use cursor-like paging because some of the numbers might be
+blacklisted. An offset-based approach can be tricky here, especially if the
+blacklist is modified while paging through the results. If there are multiple
+pages, the blacklisted numbers are backfilled so the intermediate pages do not
+contain "holes" but have the correct number of results.
+
+One can also consider capping the maximum page size or using HTTP streaming
+to prevent sending too much data in a single response.
+
+### Blacklist
+
+For storing the blacklisted numbers, I used a process-based approach (Agent).
+This could become a bottleneck if there are many concurrent requests.
+Some alternative solutions, such as ETS, could be considered.
+
+### Calculating Fibonacci sequence
+
+I've used the most basic approach, leveraging recursion and tail-recursive
+functions. This method does not work well for large "N" elements. There are
+limitations regarding memory usage (numbers grow quickly, and system limits
+can be reached fairly easily) and CPU usage. More sophisticated algorithms
+could be used here to optimize memory and CPU usage. I have not researched
+these algorithms in detail, but I know they exist ([examples](https://www.nayuki.io/page/fast-fibonacci-algorithms))).
+
+We could also cache results so subsequent calls can use pre-calculated values,
+avoiding repeated calculations.
+
+### Concurrency approach to handling requests
+
+
+Currently, all calculations happen synchronously in the process that handles
+an HTTP request. There are some trade-offs here:
+
+ - Long-running calculations may hang the HTTP request and eventually time out.
+    This could be mitigated with an asynchronous approach.
+ - There is a lack of control over the number of requests being handled
+    simultaneously. Running too many of them may consume excessive resources.
+    To address this, we could have dedicated worker(s) that queue the tasks
+    and process them in a controlled manner.
+
+### Missing pieces/TODOs
+
+- add functions specs and docs
+- add more tests
+- improve test helpers
+- improve API parameters validations
+- improve handling `cursor` for sequence API paging (should be opaque to the caller)
+- improve blacklist API responses

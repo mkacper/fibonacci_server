@@ -94,7 +94,7 @@ defmodule FibonacciServerWeb.FibonacciController do
     # AUTHOR COMMENT: not the best from performance perspective; it could be
     # returned from the internal functions that calculates the sequence to avoid
     # additional interation over the sequence
-    # Also, IMO `cursor` should be opaque to the user so it cannot be guessed.
+    # Also, `cursor` should be opaque to the user so it cannot be guessed.
     List.last(sequence).index + 1
   end
 
