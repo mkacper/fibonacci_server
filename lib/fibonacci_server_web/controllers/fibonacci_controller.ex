@@ -44,7 +44,7 @@ defmodule FibonacciServerWeb.FibonacciController do
   end
 
   defp number(%{page_size: p_size, cursor: cursor, number: number}) do
-    if number > p_size do
+    if number >= p_size do
       current_number = cursor + p_size - 1
       (current_number < number && current_number) || number
     else

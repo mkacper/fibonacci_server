@@ -36,6 +36,19 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
       assert resp["next_cursor"]
     end
 
+    test "returns correct number of results when number equals page_size", %{
+      conn: conn
+    } do
+      # given
+      number = 112
+
+      # when
+      conn = get(conn, ~p"/api/sequence?number=#{number}&page_size=#{number}")
+
+      # then
+      assert number == conn |> json_response(200) |> Map.get("data") |> length()
+    end
+
     test "respects `page_number` and `cursor` query params", %{
       conn: conn
     } do
