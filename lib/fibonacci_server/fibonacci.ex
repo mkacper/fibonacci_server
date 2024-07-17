@@ -1,6 +1,12 @@
 defmodule FibonacciServer.Fibonacci do
+  @moduledoc """
+  Main Fibonacci context module. Provides high-level API functions for handling
+  all the application logic related to dealing with Fibonacci numbers.
+  """
   alias FibonacciServer.Fibonacci.Blacklist
   alias FibonacciServer.Fibonacci.Numbers
+
+  # API
 
   def value(n) do
     blacklist = Blacklist.get()

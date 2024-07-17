@@ -1,4 +1,11 @@
 defmodule FibonacciServer.Fibonacci.Numbers do
+  @moduledoc """
+  Module that provides functions for performing Fibonacci sequence
+  related calculations.
+  """
+
+  # API
+
   def value(0), do: 0
   def value(1), do: 1
 

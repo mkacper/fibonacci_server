@@ -1,4 +1,7 @@
 defmodule FibonacciServer.Fibonacci.Blacklist do
+  @moduledoc """
+  In-memory storage for the blacklisted numbers.
+  """
   use Agent
 
   # API
