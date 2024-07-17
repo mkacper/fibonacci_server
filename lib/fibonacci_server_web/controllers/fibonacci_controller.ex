@@ -46,6 +46,10 @@ defmodule FibonacciServerWeb.FibonacciController do
     end
   end
 
+  def blacklist(conn, _params) do
+    bad_request(conn, "missing number parameter")
+  end
+
   def allowlist(conn, %{"number" => number}) do
     with {:ok, number} <- parse_number(number),
          :ok <- Fibonacci.allowlist(number) do
@@ -135,10 +139,12 @@ defmodule FibonacciServerWeb.FibonacciController do
     end
   end
 
-  defp parse_integer(int_str) do
+  defp parse_integer(int_str) when is_binary(int_str) do
     case Integer.parse(int_str) do
       {int, ""} -> {:ok, int}
       _else -> :error
     end
   end
+
+  defp parse_integer(int) when is_integer(int), do: {:ok, int}
 end

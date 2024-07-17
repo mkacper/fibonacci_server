@@ -263,6 +263,15 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
                  |> json_response(400)
       end
     end
+
+    test "returns bad request error if  number parameter is missing", %{
+      conn: conn
+    } do
+      assert %{"error" => "missing number parameter"} =
+               conn
+               |> post(~p"/api/blacklist/numbers")
+               |> json_response(400)
+    end
   end
 
   describe "DELETE /api/blacklist/numbers/:number" do
