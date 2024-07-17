@@ -10,8 +10,11 @@ defmodule FibonacciServerWeb.FibonacciController do
       {:ok, params} ->
         current_number = number(params)
         sequence = sequence(params.number, current_number, params.cursor)
-        cursor = List.last(sequence).index + 1
-        json(conn, %{data: sequence, next_cursor: cursor})
+
+        json(conn, %{
+          data: sequence,
+          next_cursor: next_cursor(sequence, params.number, current_number)
+        })
 
       {:error, reason} ->
         bad_request(conn, reason)
@@ -40,13 +43,28 @@ defmodule FibonacciServerWeb.FibonacciController do
     end
   end
 
+  defp number(%{page_size: p_size, cursor: cursor, number: number}) do
+    if number > p_size do
+      current_number = cursor + p_size - 1
+      (current_number < number && current_number) || number
+    else
+      number
+    end
+  end
+
+  defp next_cursor(sequence, number, current_number) when number > current_number do
+    List.last(sequence).index + 1
+  end
+
+  defp next_cursor(_sequence, _number, _current_number), do: nil
+
+  # Utils
+
   defp bad_request(conn, reason) do
     conn
     |> put_status(400)
     |> json(%{error: reason})
   end
-
-  # Utils
 
   defp parse_number(number), do: parse_integer(number, "number must be an integer")
 
@@ -60,15 +78,6 @@ defmodule FibonacciServerWeb.FibonacciController do
     case Integer.parse(int_str) do
       {int, ""} -> {:ok, int}
       _else -> {:error, error_reason}
-    end
-  end
-
-  defp number(%{page_size: p_size, cursor: cursor, number: number}) do
-    if number > p_size do
-      current_number = cursor + p_size - 1
-      (current_number < number && current_number) || number
-    else
-      number
     end
   end
 end

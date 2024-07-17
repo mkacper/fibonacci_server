@@ -14,7 +14,9 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
       conn = get(conn, ~p"/api/sequence?number=#{number}")
 
       # then
-      assert json_response(conn, 200)["data"] == expected_seq
+      assert resp = json_response(conn, 200)
+      assert resp["data"] == expected_seq
+      refute resp["next_cursor"]
     end
 
     test "returns 100 numbers at most by default", %{
@@ -29,6 +31,7 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
       # then
       assert resp = json_response(conn, 200)
       assert Enum.map(0..99, & &1) == Enum.map(resp["data"], & &1["index"])
+      assert resp["next_cursor"]
     end
 
     test "respects `page_number` and `cursor` query params", %{
@@ -54,7 +57,6 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
           # then
           assert result = json_response(conn, 200)
           assert expected_result == result["data"]
-          assert result["next_cursor"]
           result["next_cursor"]
       end
     end
@@ -140,9 +142,9 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
     end
 
     test "returns bad request if cursor param cannot be parsed to string", %{conn: conn} do
-      assert %{"error" => "page_size must be an integer"} =
+      assert %{"error" => "cursor must be an integer"} =
                conn
-               |> get(~p"/api/sequence?number=10&page_size=not_a_string")
+               |> get(~p"/api/sequence?number=10&cursor=not_a_string")
                |> json_response(400)
     end
   end
