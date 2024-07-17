@@ -184,7 +184,7 @@ functions. This method does not work well for large "N" elements. There are
 limitations regarding memory usage (numbers grow quickly, and system limits
 can be reached fairly easily) and CPU usage. More sophisticated algorithms
 could be used here to optimize memory and CPU usage. I have not researched
-these algorithms in detail, but I know they exist ([examples](https://www.nayuki.io/page/fast-fibonacci-algorithms))).
+these algorithms in detail, but I know they exist ([examples](https://www.nayuki.io/page/fast-fibonacci-algorithms)).
 
 We could also cache results so subsequent calls can use pre-calculated values,
 avoiding repeated calculations.
