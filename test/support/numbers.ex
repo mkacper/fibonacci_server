@@ -26,4 +26,7 @@ defmodule FibonacciServer.Support.Numbers do
 
   def format_sequence(sequence),
     do: Enum.map(sequence, &%{index: elem(&1, 1), value: elem(&1, 0)})
+
+  def reject_blacklisted(sequence, blacklist),
+    do: Enum.reject(sequence, &(&1["index"] in blacklist or &1[:index] in blacklist))
 end

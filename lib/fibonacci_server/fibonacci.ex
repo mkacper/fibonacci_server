@@ -4,12 +4,11 @@ defmodule FibonacciServer.Fibonacci do
 
   def value(n) do
     blacklist = Blacklist.get()
-    value = Numbers.value(n)
 
-    if value in blacklist do
+    if n in blacklist do
       {:error, :blacklisted}
     else
-      {:ok, value}
+      {:ok, Numbers.value(n)}
     end
   end
 

@@ -165,7 +165,4 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
     |> Jason.encode!()
     |> Jason.decode!()
   end
-
-  defp reject_blacklisted(sequence, blacklist),
-    do: Enum.reject(sequence, &(&1["index"] in blacklist))
 end
