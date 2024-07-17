@@ -40,6 +40,7 @@ defmodule FibonacciServerWeb.FibonacciController do
          :ok <- Fibonacci.blacklist(number) do
       conn
       |> put_status(201)
+      # AUTHOR COMMENT: should have come up with a better response here
       |> json(%{result: "ok"})
     else
       {:error, reason} -> bad_request(conn, reason)
@@ -79,6 +80,7 @@ defmodule FibonacciServerWeb.FibonacciController do
     end
   end
 
+  # AUTHOR COMMENT: readability of this function could be improved
   defp number(%{page_size: p_size, cursor: cursor, number: number}) do
     if number >= p_size do
       current_number = cursor + p_size - 1
@@ -89,6 +91,10 @@ defmodule FibonacciServerWeb.FibonacciController do
   end
 
   defp next_cursor(sequence, number, current_number) when number > current_number do
+    # AUTHOR COMMENT: not the best from performance perspective; it could be
+    # returned from the internal functions that calculates the sequence to avoid
+    # additional interation over the sequence
+    # Also, IMO `cursor` should be opaque to the user so it cannot be guessed.
     List.last(sequence).index + 1
   end
 

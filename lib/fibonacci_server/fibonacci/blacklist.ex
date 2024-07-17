@@ -24,6 +24,7 @@ defmodule FibonacciServer.Fibonacci.Blacklist do
 
   # Helpers
 
+  # AUTHOR COMMENT: we may consider different data type for storing the numbers
   defp add_to_list(list, number), do: Enum.uniq([number | list])
   defp remove_from_list(list, number), do: List.delete(list, number)
 end
