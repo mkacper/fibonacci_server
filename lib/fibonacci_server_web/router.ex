@@ -9,6 +9,8 @@ defmodule FibonacciServerWeb.Router do
     pipe_through :api
     get "/sequence", FibonacciController, :sequence
     get "/value/:number", FibonacciController, :value
+    post "/blacklist/numbers", FibonacciController, :blacklist
+    delete "/blacklist/numbers/:number", FibonacciController, :allowlist
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

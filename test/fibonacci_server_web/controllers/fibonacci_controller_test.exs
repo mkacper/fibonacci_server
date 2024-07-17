@@ -235,6 +235,67 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
     end
   end
 
+  describe "POST /api/blacklist/numbers" do
+    test "adds a number to a blacklist", %{
+      conn: conn
+    } do
+      # given
+      number = 12
+
+      # cleanup
+      on_exit(fn -> Fibonacci.allowlist(number) end)
+
+      # when
+      conn = post(conn, ~p"/api/blacklist/numbers", %{"number" => "#{number}"})
+
+      # then
+      assert %{"result" => "ok"} == json_response(conn, 201)
+      assert [^number] = Fibonacci.Blacklist.get()
+    end
+
+    test "returns bad request error if a given number is not a positive integer", %{
+      conn: conn
+    } do
+      for number <- ["not_an_int", "-1"] do
+        assert %{"error" => "number must be a non-negative integer"} =
+                 conn
+                 |> post(~p"/api/blacklist/numbers", %{"number" => "#{number}"})
+                 |> json_response(400)
+      end
+    end
+  end
+
+  describe "DELETE /api/blacklist/numbers/:number" do
+    test "adds a number to a blacklist", %{
+      conn: conn
+    } do
+      # given
+      number = 12
+      Fibonacci.blacklist(number)
+
+      # cleanup
+      on_exit(fn -> Fibonacci.allowlist(number) end)
+
+      # when
+      conn = delete(conn, ~p"/api/blacklist/numbers/#{number}")
+
+      # then
+      assert %{"result" => "ok"} == json_response(conn, 200)
+      assert [] = Fibonacci.Blacklist.get()
+    end
+
+    test "returns bad request error if a given number is not a positive integer", %{
+      conn: conn
+    } do
+      for number <- ["not_an_int", "-1"] do
+        assert %{"error" => "number must be a non-negative integer"} =
+                 conn
+                 |> delete(~p"/api/blacklist/numbers/#{number}")
+                 |> json_response(400)
+      end
+    end
+  end
+
   # Helpers
 
   defp fibonacci_sequence_resp(number), do: fibonacci_sequence_resp(number, 0..number)

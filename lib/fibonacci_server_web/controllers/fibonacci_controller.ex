@@ -35,6 +35,28 @@ defmodule FibonacciServerWeb.FibonacciController do
     end
   end
 
+  def blacklist(conn, %{"number" => number}) do
+    with {:ok, number} <- parse_number(number),
+         :ok <- Fibonacci.blacklist(number) do
+      conn
+      |> put_status(201)
+      |> json(%{result: "ok"})
+    else
+      {:error, reason} -> bad_request(conn, reason)
+    end
+  end
+
+  def allowlist(conn, %{"number" => number}) do
+    with {:ok, number} <- parse_number(number),
+         :ok <- Fibonacci.allowlist(number) do
+      conn
+      |> put_status(200)
+      |> json(%{result: "ok"})
+    else
+      {:error, reason} -> bad_request(conn, reason)
+    end
+  end
+
   # Internals
 
   defp sequence(number, current_number, start_from) when number <= current_number do
