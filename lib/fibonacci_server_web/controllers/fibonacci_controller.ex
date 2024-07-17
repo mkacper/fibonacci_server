@@ -30,7 +30,7 @@ defmodule FibonacciServerWeb.FibonacciController do
          {:ok, value} <- Fibonacci.value(number) do
       json(conn, %{data: value})
     else
-      {:error, :blacklisted} -> not_found(conn)
+      {:error, :blacklisted} -> not_found(conn, "number not found")
       {:error, reason} -> bad_request(conn, reason)
     end
   end
@@ -108,10 +108,10 @@ defmodule FibonacciServerWeb.FibonacciController do
     |> json(%{error: reason})
   end
 
-  defp not_found(conn) do
+  defp not_found(conn, reason) do
     conn
     |> put_status(404)
-    |> json(%{error: "number not found"})
+    |> json(%{error: reason})
   end
 
   defp parse_number(number),
@@ -131,6 +131,7 @@ defmodule FibonacciServerWeb.FibonacciController do
     end
   end
 
+  # AUTHOR COMMENT: I am having second thoughts aobut this API...
   defp parse_non_neg_integer(int_str, error_reason) do
     case parse_integer(int_str) do
       {:ok, int} when int >= 0 -> {:ok, int}
