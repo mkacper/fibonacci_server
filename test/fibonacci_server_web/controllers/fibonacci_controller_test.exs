@@ -145,21 +145,47 @@ defmodule FibonacciServerWeb.FibonacciControllerTest do
     end
 
     test "returns bad request if number param cannot be parsed to string", %{conn: conn} do
-      assert %{"error" => "number must be an integer"} =
+      assert %{"error" => "number must be a non-negative integer"} =
                conn |> get(~p"/api/sequence?number=not_a_string") |> json_response(400)
     end
 
     test "returns bad request if page_size param cannot be parsed to string", %{conn: conn} do
-      assert %{"error" => "page_size must be an integer"} =
+      assert %{"error" => "page_size must be a positive integer"} =
                conn
                |> get(~p"/api/sequence?number=10&page_size=not_a_string")
                |> json_response(400)
     end
 
     test "returns bad request if cursor param cannot be parsed to string", %{conn: conn} do
-      assert %{"error" => "cursor must be an integer"} =
+      assert %{"error" => "cursor must be a non-negative integer"} =
                conn
                |> get(~p"/api/sequence?number=10&cursor=not_a_string")
+               |> json_response(400)
+    end
+
+    test "returns bad request if number is not a non-negative integer", %{conn: conn} do
+      assert %{"error" => "number must be a non-negative integer"} =
+               conn |> get(~p"/api/sequence?number=-1") |> json_response(400)
+    end
+
+    test "returns error if page_size is not a positive integer", %{conn: conn} do
+      assert %{"error" => "page_size must be a positive integer"} =
+               conn
+               |> get(~p"/api/sequence?number=10&page_size=-1")
+               |> json_response(400)
+    end
+
+    test "returns error if cursor is not a positive integer", %{conn: conn} do
+      assert %{"error" => "cursor must be a non-negative integer"} =
+               conn
+               |> get(~p"/api/sequence?number=10&cursor=-1")
+               |> json_response(400)
+    end
+
+    test "returns error if cursor is greater than number", %{conn: conn} do
+      assert %{"error" => "cursor is invalid"} =
+               conn
+               |> get(~p"/api/sequence?number=10&cursor=11")
                |> json_response(400)
     end
   end

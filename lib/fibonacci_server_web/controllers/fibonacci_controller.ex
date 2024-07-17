@@ -38,7 +38,7 @@ defmodule FibonacciServerWeb.FibonacciController do
   defp validate_params(%{"number" => number} = params) do
     with {:ok, number} <- parse_number(number),
          {:ok, page_size} <- parse_page_size(params["page_size"]),
-         {:ok, cursor} <- parse_cursor(params["cursor"]) do
+         {:ok, cursor} <- parse_cursor(params["cursor"], number) do
       {:ok, %{number: number, page_size: page_size, cursor: cursor}}
     end
   end
@@ -66,18 +66,41 @@ defmodule FibonacciServerWeb.FibonacciController do
     |> json(%{error: reason})
   end
 
-  defp parse_number(number), do: parse_integer(number, "number must be an integer")
+  defp parse_number(number),
+    do: parse_non_neg_integer(number, "number must be a non-negative integer")
 
   defp parse_page_size(nil), do: {:ok, @default_page_size}
-  defp parse_page_size(page_size), do: parse_integer(page_size, "page_size must be an integer")
 
-  defp parse_cursor(nil), do: {:ok, @default_cursor}
-  defp parse_cursor(cursor), do: parse_integer(cursor, "cursor must be an integer")
+  defp parse_page_size(page_size),
+    do: parse_pos_integer(page_size, "page_size must be a positive integer")
 
-  defp parse_integer(int_str, error_reason) do
+  defp parse_cursor(nil, _number), do: {:ok, @default_cursor}
+
+  defp parse_cursor(cursor, number) do
+    case parse_non_neg_integer(cursor, "cursor must be a non-negative integer") do
+      {:ok, cursor} when cursor > number -> {:error, "cursor is invalid"}
+      other -> other
+    end
+  end
+
+  defp parse_non_neg_integer(int_str, error_reason) do
+    case parse_integer(int_str) do
+      {:ok, int} when int >= 0 -> {:ok, int}
+      _else -> {:error, error_reason}
+    end
+  end
+
+  defp parse_pos_integer(int_str, error_reason) do
+    case parse_integer(int_str) do
+      {:ok, int} when int > 0 -> {:ok, int}
+      _else -> {:error, error_reason}
+    end
+  end
+
+  defp parse_integer(int_str) do
     case Integer.parse(int_str) do
       {int, ""} -> {:ok, int}
-      _else -> {:error, error_reason}
+      _else -> :error
     end
   end
 end
